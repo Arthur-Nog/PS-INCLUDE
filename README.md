@@ -3,6 +3,10 @@
 ## Descrição do Projeto
 API RESTful desenvolvida para o gerenciamento de frotas e automação de sistemas de aluguel de veículos. O sistema permite o controle completo dos registros de veículos e o gerenciamento das locações, garantindo a integridade dos status de disponibilidade e o registro histórico das operações.
 
+**Swagger (API hospedada):** [https://ps-include.onrender.com/docs](https://ps-include.onrender.com/docs)
+
+No plano gratuito do Render a primeira abertura pode demorar cerca de 1 minuto enquanto o serviço acorda.
+
 ## ⚙️ Requisitos Funcionais Implementados
 - [x] **Cadastrar veículo**: Registro de novos veículos contendo marca, modelo, ano, placa, valor da diária e status de disponibilidade.
 - [x] **Editar veículo**: Atualização de dados cadastrais de um veículo específico.
@@ -142,10 +146,9 @@ docker run --rm -p 8080:8080 \
 ```
 
 ## Documentação da API
-Com a aplicação no ar:
-
-- Swagger UI: [http://localhost:8080/docs](http://localhost:8080/docs)
-- OpenAPI JSON: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+- Swagger da API hospedada: [https://ps-include.onrender.com/docs](https://ps-include.onrender.com/docs)
+- Swagger local: [http://localhost:8080/docs](http://localhost:8080/docs)
+- OpenAPI JSON local: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
 - A raiz (`/`) redireciona para o Swagger
 
 ## Endpoints principais
