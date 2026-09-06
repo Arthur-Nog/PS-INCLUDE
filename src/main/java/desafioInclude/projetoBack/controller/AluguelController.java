@@ -5,7 +5,6 @@ import desafioInclude.projetoBack.dto.response.AluguelResponseDTO;
 import desafioInclude.projetoBack.entity.enums.StatusAluguel;
 import desafioInclude.projetoBack.service.AluguelService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@SecurityRequirement(name = "bearer-key")
 @RestController
 @RequestMapping("/aluguel")
 @Validated
