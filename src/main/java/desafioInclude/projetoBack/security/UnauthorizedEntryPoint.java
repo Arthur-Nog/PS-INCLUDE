@@ -1,7 +1,5 @@
 package desafioInclude.projetoBack.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import desafioInclude.projetoBack.exception.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -17,27 +15,22 @@ import java.time.LocalDateTime;
 @Component
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
-
-    public UnauthorizedEntryPoint(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     @Override
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
-        ErrorResponseDTO body = new ErrorResponseDTO(
+        String body = """
+                {"timeStamp":"%s","status":%d,"error":"%s","message":"Token ausente ou inválido"}
+                """.formatted(
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                "Token ausente ou inválido"
+                HttpStatus.UNAUTHORIZED.getReasonPhrase()
         );
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        objectMapper.writeValue(response.getOutputStream(), body);
+        response.getWriter().write(body);
     }
 }
