@@ -26,11 +26,13 @@ public class DatasourceUrlEnvironmentPostProcessor implements EnvironmentPostPro
             return;
         }
 
+        rawUrl = stripWrappingQuotes(rawUrl.trim());
+
         Map<String, Object> properties = new HashMap<>();
         properties.put("spring.datasource.driver-class-name", "org.postgresql.Driver");
 
         if (rawUrl.startsWith("jdbc:")) {
-            properties.put("spring.datasource.url", rawUrl);
+            properties.put("spring.datasource.url", ensureSslMode(rawUrl));
             environment.getPropertySources().addFirst(new MapPropertySource(PROPERTY_SOURCE_NAME, properties));
             return;
         }
@@ -62,10 +64,14 @@ public class DatasourceUrlEnvironmentPostProcessor implements EnvironmentPostPro
 
         int port = uri.getPort() == -1 ? 5432 : uri.getPort();
         String database = uri.getPath() == null ? "" : uri.getPath().replaceFirst("^/", "");
+        if (database.contains("?")) {
+            database = database.substring(0, database.indexOf('?'));
+        }
         String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + "/" + database;
         jdbcUrl += uri.getQuery() == null || uri.getQuery().isBlank()
-                ? "?sslmode=require"
+                ? ""
                 : "?" + uri.getQuery();
+        jdbcUrl = ensureSslMode(jdbcUrl);
 
         properties.put("spring.datasource.url", jdbcUrl);
         if (username != null) {
@@ -76,6 +82,22 @@ public class DatasourceUrlEnvironmentPostProcessor implements EnvironmentPostPro
         }
 
         environment.getPropertySources().addFirst(new MapPropertySource(PROPERTY_SOURCE_NAME, properties));
+    }
+
+    private static String ensureSslMode(String jdbcUrl) {
+        if (jdbcUrl.contains("sslmode=")) {
+            return jdbcUrl;
+        }
+        return jdbcUrl + (jdbcUrl.contains("?") ? "&" : "?") + "sslmode=require";
+    }
+
+    private static String stripWrappingQuotes(String value) {
+        if (value.length() >= 2
+                && ((value.startsWith("\"") && value.endsWith("\""))
+                || (value.startsWith("'") && value.endsWith("'")))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 
     private static String decode(String value) {
