@@ -1,16 +1,12 @@
-FROM ubuntu:latest AS build
-
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk -y
+FROM eclipse-temurin:17-jdk-jammy AS build
+WORKDIR /app
+RUN apt-get update && apt-get install -y maven
 COPY . .
+RUN mvn -B clean package -DskipTests
 
-RUN apt-get install maven -y
-RUN mvn clean install
-
-FROM eclipse-temurin:17-jdk-jammy
-
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
 EXPOSE 8080
-
-COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar app.jar
-
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=65.0 -XX:+UseSerialGC -XX:+ExitOnOutOfMemoryError"
+COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
